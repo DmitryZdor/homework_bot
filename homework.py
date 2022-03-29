@@ -82,14 +82,16 @@ def main():
         try:
             response = get_api_answer(current_timestamp)
             chk_response = check_response(response)
-            if chk_response:
-                sts = parse_status(chk_response[0])
+            print(chk_response)
+            if len(chk_response) == 0:
+                send_message(bot, "Ничего нового нет")
+            for i in range(len(chk_response)):
+                print(f'{i} {chk_response[i]}')
+                sts = parse_status(chk_response[i])
                 send_message(bot, sts)
-                current_timestamp = response['current_date']
-                time.sleep(RETRY_TIME)
-            else:
-                send_message(bot, 'нет ничего')
-                time.sleep(RETRY_TIME)
+
+            current_timestamp = response['current_date']
+            time.sleep(RETRY_TIME)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             send_message(bot, message)
