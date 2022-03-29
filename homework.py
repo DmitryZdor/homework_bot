@@ -33,10 +33,12 @@ logger.addHandler(handler)
 
 
 def send_message(bot, message):
+    """отправляет сообщение в Telegram чат"""
     bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
 
 
 def get_api_answer(current_timestamp):
+    """делает запрос к единственному эндпоинту API-сервиса"""
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     try:
@@ -54,11 +56,13 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
+    """проверяет ответ API на корректность"""
     if isinstance(response['homeworks'], list):
         return response['homeworks']
 
 
 def parse_status(homework):
+    """извлекает из информации о конкретной домашней работе её статус"""
     homework_name = homework['homework_name']
     homework_status = homework['status']
     verdict = HOMEWORK_STATUSES[f'{homework_status}']
@@ -66,10 +70,12 @@ def parse_status(homework):
 
 
 def check_tokens():
+    """проверяет доступность переменных окружения"""
     return all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID))
 
 
 def main():
+    """описана основная логика работы программы"""
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     while True:
