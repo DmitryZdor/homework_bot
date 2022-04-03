@@ -43,7 +43,6 @@ def send_message(bot, message):
         raise TelegramError(f'Сбой отправки сообщения в бот {error}')
 
 
-
 def get_api_answer(current_timestamp):
     """Делает запрос к единственному эндпоинту API-сервиса."""
     timestamp = current_timestamp or int(time.time())
@@ -75,12 +74,11 @@ def parse_status(homework):
     if homework['status'] not in HOMEWORK_STATUSES:
         logging.error('Какой-то непонятный статус проверки :(')
         raise HomeworkStatusNotExist(
-                'Такой статус не существует: '
-                f'{homework["status"]}'
+            'Такой статус не существует: '
+            f'{homework["status"]}'
             )
     verdict = HOMEWORK_STATUSES[f'{homework_status}']
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
-
 
 
 def check_tokens():
@@ -91,7 +89,7 @@ def check_tokens():
 def main():
     """Описана основная логика работы программы."""
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = 1648986-24*3600*30
+    current_timestamp = int(time.time())
     while True:
         try:
             response = get_api_answer(current_timestamp)
