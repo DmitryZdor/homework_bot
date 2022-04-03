@@ -76,7 +76,7 @@ def parse_status(homework):
         raise HomeworkStatusNotExist(
             'Такой статус не существует: '
             f'{homework["status"]}'
-            )
+        )
     verdict = HOMEWORK_STATUSES[f'{homework_status}']
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
