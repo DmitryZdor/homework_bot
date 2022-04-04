@@ -6,7 +6,11 @@ import time
 from http import HTTPStatus
 from dotenv import load_dotenv
 from telegram import TelegramError
-from exceptions import *
+from exceptions import (
+    HomeworkStatusNotExist,
+    ResponseStatusCodeError,
+    WrongAPIKeys
+)
 
 load_dotenv()
 
