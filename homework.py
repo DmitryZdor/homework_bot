@@ -6,19 +6,17 @@ import time
 from http import HTTPStatus
 from dotenv import load_dotenv
 from telegram import TelegramError
-from exceptions import ResponseStatusCodeError, HomeworkStatusNotExist
+from exceptions import *
 
 load_dotenv()
-
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-RETRY_TIME = 1200
+RETRY_TIME = 20
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
-
 
 HOMEWORK_STATUSES = {
     'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
@@ -64,7 +62,10 @@ def get_api_answer(current_timestamp):
 def check_response(response):
     """Проверяет ответ API на корректность."""
     if isinstance(response['homeworks'], list):
+        logging.info('Начинаем проверку API')
         return response['homeworks']
+    else:
+        raise WrongAPIKeys('Нет нужных ключей')
 
 
 def parse_status(homework):
@@ -88,8 +89,13 @@ def check_tokens():
 
 def main():
     """Описана основная логика работы программы."""
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time())
+    try:
+        bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    except Exception as error:
+        logging.critical('Введен неправильный токен или токен отсутствует: '
+                         f'{error}'
+                         )
+    current_timestamp = int(time.time()) - 24 * 3600 * 20
     while True:
         try:
             response = get_api_answer(current_timestamp)
@@ -105,7 +111,8 @@ def main():
             message = f'Сбой в работе программы: {error}'
             send_message(bot, message)
             logging.critical(message)
-        time.sleep(RETRY_TIME)
+        finally:
+            time.sleep(RETRY_TIME)
 
 
 if __name__ == '__main__':
