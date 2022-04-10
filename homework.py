@@ -1,3 +1,4 @@
+import datetime
 import os
 import logging
 import requests
@@ -18,7 +19,7 @@ PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-RETRY_TIME = 20
+RETRY_TIME = 1200
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 
@@ -99,16 +100,15 @@ def main():
         logging.critical('Введен неправильный токен или токен отсутствует: '
                          f'{error}'
                          )
-    current_timestamp = int(time.time()) - 24 * 3600 * 20
+    current_timestamp = int(time.time()) - 24 * 60 * 60 *30
     while True:
         try:
-            response = get_api_answer(current_timestamp)
+            response = get_api_answer(current_timestamp - RETRY_TIME)
             chk_response = check_response(response)
-            print(current_timestamp)
             if len(chk_response) == 0:
-                send_message(bot, "Ничего нового нет")
+                send_message(bot, f"На время {datetime.datetime.utcfromtimestamp(current_timestamp-RETRY_TIME).strftime('%Y-%m-%d %H:%M:%S')} ничего нового нет")
             for i in range(len(chk_response)):
-                sts = parse_status(chk_response[i])
+                sts = f"{parse_status(chk_response[i])} {datetime.datetime.utcfromtimestamp(current_timestamp).strftime('%Y-%m-%d %H:%M:%S')}"
                 send_message(bot, sts)
             current_timestamp = response['current_date']
         except Exception as error:
