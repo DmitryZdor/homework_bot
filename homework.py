@@ -19,7 +19,7 @@ PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-RETRY_TIME = 1200
+RETRY_TIME = 1800
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 
@@ -103,12 +103,12 @@ def main():
     current_timestamp = int(time.time()) - 24 * 60 * 60 *30
     while True:
         try:
-            response = get_api_answer(current_timestamp - RETRY_TIME)
+            response = get_api_answer(current_timestamp - 60)
             chk_response = check_response(response)
             if len(chk_response) == 0:
-                send_message(bot, f"На время {datetime.datetime.utcfromtimestamp(current_timestamp-30).strftime('%Y-%m-%d %H:%M:%S')} ничего нового нет")
+                send_message(bot, f"На время {datetime.datetime.utcfromtimestamp(current_timestamp+10800).strftime('%Y-%m-%d %H:%M:%S')} ничего нового нет")
             for i in range(len(chk_response)):
-                sts = f"{parse_status(chk_response[i])} {datetime.datetime.utcfromtimestamp(current_timestamp-30).strftime('%Y-%m-%d %H:%M:%S')}"
+                sts = f"{parse_status(chk_response[i])} {datetime.datetime.utcfromtimestamp(current_timestamp+10800).strftime('%Y-%m-%d %H:%M:%S')}"
                 send_message(bot, sts)
             current_timestamp = response['current_date']
         except Exception as error:
