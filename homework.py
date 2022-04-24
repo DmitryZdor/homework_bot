@@ -19,7 +19,7 @@ PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-RETRY_TIME = 600
+RETRY_TIME = 1200
 ONE_MONTH = 60 * 60 * 24 * 30
 ONE_MINUTE = 60
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
@@ -108,7 +108,7 @@ def main():
             response = get_api_answer(current_timestamp - ONE_MINUTE)
             chk_response = check_response(response)
             my_time = (datetime.datetime.utcfromtimestamp(
-                current_timestamp + 10800).strftime('%Y-%m-%d %H:%M:%S')
+                current_timestamp + 10800+RETRY_TIME).strftime('%Y-%m-%d %H:%M:%S')
                        )
             if len(chk_response) == 0:
                 send_message(bot, f"На время {my_time} ничего нового нет")
